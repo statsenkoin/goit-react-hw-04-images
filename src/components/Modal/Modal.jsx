@@ -16,7 +16,7 @@ export function Modal({ onToggleModal, children }) {
     return () => {
       window.removeEventListener('keydown', handleEscKeyDown);
     };
-  }, [onToggleModal]);
+  }, []);
 
   const handleBackdropClick = e => {
     if (e.target === e.currentTarget) onToggleModal();
