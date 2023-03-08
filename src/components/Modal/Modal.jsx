@@ -18,18 +18,18 @@ export class Modal extends Component {
 
   handleEscKeyDown = e => {
     if (e.code === 'Escape') {
-      this.props.onClose();
+      this.props.onToggleModal();
     }
   };
 
   handleBackdropClick = e => {
     if (e.target === e.currentTarget) {
-      this.props.onClose();
+      this.props.onToggleModal();
     }
   };
 
   handleOnCloseButton = () => {
-    this.props.onClose();
+    this.props.onToggleModal();
   };
 
   render() {

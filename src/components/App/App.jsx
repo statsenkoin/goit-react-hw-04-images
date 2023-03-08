@@ -143,7 +143,7 @@ class App extends Component {
         <Tostify />
 
         {isModalShown && (
-          <Modal onClose={this.toggleModal}>
+          <Modal onToggleModal={this.toggleModal}>
             <img src={selectedImageUrl} alt={selectedImageTags} />
           </Modal>
         )}
