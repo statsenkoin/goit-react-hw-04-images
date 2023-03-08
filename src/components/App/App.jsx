@@ -1,155 +1,119 @@
-import React, { Component } from 'react';
+import { useEffect, useState } from 'react';
+
 import fetchPixabay from 'services/fetchPixabay';
 import { pixabayConstants } from 'constants';
-// import { toast } from 'react-toastify';
 
 import { Layout } from './App.styled';
 import {
   Searchbar,
   ImageGallery,
-  Tostify,
   LoadMoreButton,
   Loader,
   WarningPage,
   Modal,
 } from 'components';
 
-class App extends Component {
-  state = {
-    input: '',
-    gallery: [],
-    page: 1,
-    isEmpty: false,
-    isLastPage: true,
-    isLoading: false,
-    selectedImageUrl: null,
-    selectedImageTags: null,
-  };
+export function App() {
+  const [input, setInput] = useState('');
+  const [gallery, setGallery] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isResponseEmpty, setIsResponseEmpty] = useState(false);
+  const [error, setError] = useState(null);
+  const [isLastPage, setIsLastPage] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModalShown, setIsModalShown] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState('');
+  const [selectedImageTags, setSelectedImageTags] = useState('');
 
-  componentDidUpdate(_, prevState) {
-    const { page, gallery, input } = this.state;
-    const {
-      input: prevInput,
-      page: prevPage,
-      gallery: prevGallery,
-    } = prevState;
+  useEffect(() => {
+    setGallery([]);
+    setPage(1);
+    setError(null);
+    setIsLastPage(true);
+    setIsLoading(false);
+    setIsModalShown(false);
+  }, [input]);
 
-    if (prevInput !== input) this.resetState();
+  useEffect(() => {
+    if (input === '') return;
 
-    if (prevInput !== input || prevPage !== page) this.getImageSet();
+    async function getImageSet() {
+      setIsLoading(true);
+      try {
+        const { hits, total } = await fetchPixabay(input, page);
 
-    if (gallery !== prevGallery && page > 1)
-      window.scrollBy(0, window.innerHeight / 2);
-  }
+        if (hits.length === 0) return setIsResponseEmpty(true);
 
-  resetState = () => {
-    this.setState({
-      gallery: [],
-      page: 1,
-      error: null,
-      isLastPage: true,
-      isLoading: false,
-      isModalShown: false,
-    });
-  };
-
-  getImageSet = async () => {
-    const { input, page } = this.state;
-
-    this.setState({ isLoading: true });
-    try {
-      // data = {total: 1159760, totalHits: 500, hits: Array(12)}
-      const { hits, total } = await fetchPixabay(input, page);
-
-      if (hits.length === 0) {
-        // return toast.error('Not valid search query. Try another request.');
-        return this.setState({ isEmpty: true });
+        const pages = calculateTotalPages(total);
+        setGallery(prevGallery => [...prevGallery, ...hits]);
+        setIsLastPage(page < pages ? false : true);
+        setError(null);
+        setIsResponseEmpty(false);
+      } catch (error) {
+        console.log('error :>> ', error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
-
-      const pages = this.calculateTotalPages(total);
-      this.setState(prev => ({
-        gallery: [...prev.gallery, ...hits],
-        isLastPage: page < pages ? false : true,
-        error: null,
-        isEmpty: false,
-      }));
-    } catch (error) {
-      console.log('error :>> ', error);
-      this.setState({ error: error.message });
-      // toast.error('Something went wrong. Try again later.');
-    } finally {
-      this.setState({ isLoading: false });
     }
+    getImageSet();
+  }, [input, page]);
+
+  useEffect(() => {
+    if (page > 1) {
+      window.scrollBy(0, window.innerHeight / 2);
+    }
+  }, [gallery, page]);
+
+  const handleSearchInput = newInput => {
+    if (input !== newInput) setInput(newInput);
   };
 
-  calculateTotalPages = total => {
+  const calculateTotalPages = total => {
     const { PER_PAGE } = pixabayConstants;
     return Math.ceil(total / PER_PAGE);
   };
 
-  handleSearchInput = userInput => {
-    const { input } = this.state;
-    if (input !== userInput) this.setState({ input: userInput });
+  const onLoadMoreClick = () => {
+    setPage(prevPage => prevPage + 1);
   };
 
-  onLoadMoreClick = () => {
-    this.setState(({ page }) => ({ page: page + 1 }));
+  const selectModalImage = (link, tags) => {
+    setSelectedImageUrl(link);
+    setSelectedImageTags(tags);
+    toggleModal();
   };
 
-  selectModalImage = (link, tags) => {
-    this.setState({ selectedImageUrl: link, selectedImageTags: tags });
-    this.toggleModal();
+  const toggleModal = () => {
+    setIsModalShown(isModalShown => !isModalShown);
   };
 
-  toggleModal = () => {
-    this.setState(({ isModalShown }) => ({
-      isModalShown: !isModalShown,
-    }));
-  };
+  return (
+    <Layout>
+      {isLoading && <Loader />}
 
-  render() {
-    const {
-      selectedImageUrl,
-      selectedImageTags,
-      isModalShown,
-      isLoading,
-      isLastPage,
-      isEmpty,
-      error,
-      gallery,
-    } = this.state;
-    return (
-      <Layout>
-        {isLoading && <Loader />}
+      <Searchbar handleSearchInput={handleSearchInput}></Searchbar>
 
-        <Searchbar handleSearchInput={this.handleSearchInput}></Searchbar>
+      {gallery && (
+        <>
+          <ImageGallery
+            onSelectModalImage={selectModalImage}
+            gallery={gallery}
+          ></ImageGallery>
+          {!isLastPage && <LoadMoreButton onClick={onLoadMoreClick} />}
+        </>
+      )}
 
-        {gallery && (
-          <>
-            <ImageGallery
-              onSelectModalImage={this.selectModalImage}
-              gallery={gallery}
-            ></ImageGallery>
-            {!isLastPage && <LoadMoreButton onClick={this.onLoadMoreClick} />}
-          </>
-        )}
+      {isResponseEmpty && <WarningPage text={'There is nothing to show.'} />}
+      {error && (
+        <WarningPage text={`Something went wrong.\n Try again later.`} />
+      )}
 
-        {isEmpty && <WarningPage text={'There is nothing to show.'} />}
-        {error && (
-          <WarningPage text={`Something went wrong.\n Try again later.`} />
-          // <WarningPage text={error} />
-        )}
-
-        <Tostify />
-
-        {isModalShown && (
-          <Modal onToggleModal={this.toggleModal}>
-            <img src={selectedImageUrl} alt={selectedImageTags} />
-          </Modal>
-        )}
-      </Layout>
-    );
-  }
+      {isModalShown && (
+        <Modal onToggleModal={toggleModal}>
+          <img src={selectedImageUrl} alt={selectedImageTags} />
+        </Modal>
+      )}
+    </Layout>
+  );
 }
-
-export { App };
