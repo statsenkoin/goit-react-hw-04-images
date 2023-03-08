@@ -22,8 +22,8 @@ export function App() {
   const [isLastPage, setIsLastPage] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalShown, setIsModalShown] = useState(false);
-  const [selectedImageUrl, setSelectedImageUrl] = useState('');
-  const [selectedImageTags, setSelectedImageTags] = useState('');
+  const [selectedImageUrl, setSelectedImageUrl] = useState(null);
+  const [selectedImageTags, setSelectedImageTags] = useState(null);
 
   useEffect(() => {
     setGallery([]);

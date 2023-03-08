@@ -10,7 +10,7 @@ import {
 import { BiSearchAlt } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 
-export const Searchbar = ({ handleSearchInput }) => {
+export function Searchbar({ handleSearchInput }) {
   return (
     <Header>
       <Formik
@@ -41,7 +41,7 @@ export const Searchbar = ({ handleSearchInput }) => {
       </Formik>
     </Header>
   );
-};
+}
 
 Searchbar.propTypes = {
   handleSearchInput: PropTypes.func.isRequired,

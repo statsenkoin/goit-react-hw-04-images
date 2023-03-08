@@ -37,46 +37,6 @@ export function Modal({ onToggleModal, children }) {
   );
 }
 
-// export class Modal extends Component {
-//   componentDidMount() {
-//     window.addEventListener('keydown', this.handleEscKeyDown);
-//   }
-
-//   componentWillUnmount() {
-//     window.removeEventListener('keydown', this.handleEscKeyDown);
-//   }
-
-//   handleEscKeyDown = e => {
-//     if (e.code === 'Escape') {
-//       this.props.onToggleModal();
-//     }
-//   };
-
-//   handleBackdropClick = e => {
-//     if (e.target === e.currentTarget) {
-//       this.props.onToggleModal();
-//     }
-//   };
-
-//   handleOnCloseButton = () => {
-//     this.props.onToggleModal();
-//   };
-
-//   render() {
-//     return createPortal(
-//       <Backdrop onClick={this.handleBackdropClick}>
-//         <Content>
-//           <ButtonClose type="button" onClick={this.handleOnCloseButton}>
-//             <AiFillCloseCircle />
-//           </ButtonClose>
-//           {this.props.children}
-//         </Content>
-//       </Backdrop>,
-//       modalRoot
-//     );
-//   }
-// }
-
 Modal.propTypes = {
   onToggleModal: PropTypes.func.isRequired,
   children: PropTypes.node,

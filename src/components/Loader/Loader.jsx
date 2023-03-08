@@ -6,7 +6,7 @@ import { RotatingLines } from 'react-loader-spinner';
 
 const loader = document.querySelector('#loader');
 
-export const Loader = () => {
+export function Loader() {
   return createPortal(
     <Backdrop>
       <Content>
@@ -22,4 +22,4 @@ export const Loader = () => {
     </Backdrop>,
     loader
   );
-};
+}

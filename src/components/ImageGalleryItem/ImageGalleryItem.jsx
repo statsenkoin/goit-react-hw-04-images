@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { GalleryItem, GalleryItemImage } from './ImageGalleryItem.styled';
 
-export const ImageGalleryItem = ({ gallery, onSelectModalImage }) => {
+export function ImageGalleryItem({ gallery, onSelectModalImage }) {
   return gallery.map(({ id, webformatURL, largeImageURL, tags }) => (
     <GalleryItem key={id}>
       <GalleryItemImage
@@ -13,7 +13,7 @@ export const ImageGalleryItem = ({ gallery, onSelectModalImage }) => {
       />
     </GalleryItem>
   ));
-};
+}
 
 ImageGalleryItem.propTypes = {
   gallery: PropTypes.arrayOf(

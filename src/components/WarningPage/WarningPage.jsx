@@ -1,8 +1,6 @@
 import React from 'react';
 import { WarningPageStyled } from './WarningPage.styled';
 
-const WarningPage = ({ text }) => {
+export function WarningPage({ text }) {
   return <WarningPageStyled>{text}</WarningPageStyled>;
-};
-
-export { WarningPage };
+}
