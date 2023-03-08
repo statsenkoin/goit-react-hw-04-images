@@ -1,0 +1,9 @@
+1. https://github.com/axios/axios#axios
+2. https://www.npmjs.com/package/prop-types
+3. https://formik.org/
+4. https://styled-components.com/docs/basics#getting-started
+5. https://github.com/ai/nanoid#readme
+6. https://www.npmjs.com/package/yup
+7. https://react-icons.github.io/react-icons
+8. https://fkhadra.github.io/react-toastify/introduction/
+9. https://mhnpd.github.io/react-loader-spinner/docs/category/components
