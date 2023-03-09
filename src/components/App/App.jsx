@@ -28,6 +28,7 @@ export function App() {
   useEffect(() => {
     setGallery([]);
     setPage(1);
+    setIsResponseEmpty(false);
     setError(null);
     setIsLastPage(true);
     setIsLoading(false);
